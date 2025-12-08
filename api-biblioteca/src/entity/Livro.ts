@@ -1,24 +1,22 @@
-// src/entity/Livro.ts
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"; // ESTE IMPORT ESTAVA FALTANDO OU INCOMPLETO
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity()
+@Entity("livros")
 export class Livro {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id!: number; // Adicione "!"
+  @Column()
+  titulo: string;
 
-    @Column()
-    titulo!: string; // Adicione "!"
+  @Column()
+  autor: string;
 
-    @Column()
-    autor!: string; // Adicione "!"
+  @Column()
+  isbn: string;
 
-    @Column({ unique: true })
-    isbn!: string; // Adicione "!"
+  @Column()
+  anoPublicacao: number;
 
-    @Column()
-    anoPublicacao!: number; // Adicione "!"
-
-    @Column({ default: true })
-    disponivel!: boolean; // Adicione "!"
+  @Column()
+  disponivel: boolean;
 }
