@@ -1,24 +1,14 @@
-import "reflect-metadata";
-import express, { Express } from "express";
+import app from "./app";
 import { AppDataSource } from "./data-source";
-import { LivroController } from "./controller/LivroController";
 
-AppDataSource.initialize().then(async () => {
-    const app: Express = express();
-    const port = 3000;
+AppDataSource.initialize()
+  .then(() => {
+    console.log("📚 Banco conectado!");
 
-    app.use(express.json());
-
-    const livroController = new LivroController();
-
-    app.post("/api/livros", (req, res) => livroController.criar(req as express.Request, res as express.Response));
-    app.get("/api/livros", (req, res) => livroController.lerTodos(req as express.Request, res as express.Response));
-    app.get("/api/livros/:id", (req, res) => livroController.lerPorId(req as express.Request, res as express.Response));
-    app.put("/api/livros/:id", (req, res) => livroController.atualizar(req as express.Request, res as express.Response));
-    app.delete("/api/livros/:id", (req, res) => livroController.excluir(req as express.Request, res as express.Response));
-
-    app.listen(port, () => {
-        console.log(`Servidor rodando em http://localhost:${port}`);
+    app.listen(3000, () => {
+      console.log("🚀 Servidor rodando na porta 3000");
     });
-
-}).catch(error => console.log(error));
+  })
+  .catch((err) => {
+    console.error("Erro ao conectar banco:", err);
+  });

@@ -1,27 +1,25 @@
-
 import { AppDataSource } from "../data-source";
 import { Livro } from "../entity/Livro";
 
-export class LivroRepository {
-    private ormRepository = AppDataSource.getRepository(Livro);
+export const LivroRepository = AppDataSource.getRepository(Livro).extend({
+  listar() {
+    return this.find();
+  },
 
-   
-    async buscarTodos(): Promise<Livro[]> {
-        return this.ormRepository.find();
-    }
+  buscarPorId(id: number) {
+    return this.findOneBy({ id });
+  },
 
-    
-    async buscarPorId(id: number): Promise<Livro | null> {
-        return this.ormRepository.findOneBy({ id });
-    }
+  criar(dados: Partial<Livro>) {
+    const livro = this.create(dados);
+    return this.save(livro);
+  },
 
-    
-    async salvar(livro: Partial<Livro>): Promise<Livro> {
-        return this.ormRepository.save(livro);
-    }
+  atualizar(id: number, dados: Partial<Livro>) {
+    return this.update(id, dados);
+  },
 
-    
-    async excluir(id: number): Promise<void> {
-        await this.ormRepository.delete(id);
-    }
-}
+  remover(id: number) {
+    return this.delete(id);
+  }
+});

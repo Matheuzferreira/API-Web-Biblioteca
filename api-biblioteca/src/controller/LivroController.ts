@@ -1,100 +1,43 @@
 import { Request, Response } from "express";
 import { LivroRepository } from "../repository/LivroRepository";
-import { Livro } from "../entity/Livro";
 
 export class LivroController {
-    private repository = new LivroRepository();
+  async criar(req: Request, res: Response) {
+    const dados = req.body;
+    const livro = await LivroRepository.criar(dados);
+    return res.status(201).json(livro);
+  }
 
-    async criar(req: Request, res: Response) {
-        const novoLivro: Livro = req.body;
+  async listar(req: Request, res: Response) {
+    const livros = await LivroRepository.listar();
+    return res.json(livros);
+  }
 
-        if (!novoLivro.titulo || !novoLivro.autor || !novoLivro.isbn) {
-            return res.status(400).json({ mensagem: "Título, Autor e ISBN são obrigatórios." });
-        }
+  async buscarPorId(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    const livro = await LivroRepository.buscarPorId(id);
 
-        try {
-            const livroSalvo = await this.repository.salvar(novoLivro);
-            res.status(201).json(livroSalvo);
-        } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao cadastrar livro." });
-        }
+    if (!livro) {
+      return res.status(404).json({ erro: "Livro não encontrado" });
     }
 
-    async lerTodos(req: Request, res: Response) {
-        try {
-            const livros = await this.repository.buscarTodos();
-            res.json(livros);
-        } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao buscar livros." });
-        }
-    }
+    return res.json(livro);
+  }
 
-    async lerPorId(req: Request, res: Response) {
-        const idString = req.params.id;
+  async atualizar(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    const dados = req.body;
 
-        if (!idString || isNaN(parseInt(idString))) {
-            return res.status(400).json({ mensagem: "ID inválido ou ausente." });
-        }
+    await LivroRepository.atualizar(id, dados);
 
-        const id = parseInt(idString);
+    return res.json({ mensagem: "Livro atualizado" });
+  }
 
-        try {
-            const livro = await this.repository.buscarPorId(id);
+  async remover(req: Request, res: Response) {
+    const id = Number(req.params.id);
 
-            if (!livro) {
-                return res.status(404).json({ mensagem: "Livro não encontrado." });
-            }
+    await LivroRepository.remover(id);
 
-            res.json(livro);
-        } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao buscar livro." });
-        }
-    }
-
-    async atualizar(req: Request, res: Response) {
-        const idString = req.params.id;
-        const dadosAtualizados = req.body;
-
-        if (!idString || isNaN(parseInt(idString))) {
-            return res.status(400).json({ mensagem: "ID inválido ou ausente." });
-        }
-
-        const id = parseInt(idString);
-
-        try {
-            let livroExistente = await this.repository.buscarPorId(id);
-
-            if (!livroExistente) {
-                return res.status(404).json({ mensagem: "Livro não encontrado para atualização." });
-            }
-
-            const livroAtualizado = await this.repository.salvar({ ...livroExistente, ...dadosAtualizados });
-            res.json(livroAtualizado);
-        } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao atualizar livro." });
-        }
-    }
-
-    async excluir(req: Request, res: Response) {
-        const idString = req.params.id;
-
-        if (!idString || isNaN(parseInt(idString))) {
-            return res.status(400).json({ mensagem: "ID inválido ou ausente." });
-        }
-
-        const id = parseInt(idString);
-
-        try {
-            const livro = await this.repository.buscarPorId(id);
-
-            if (!livro) {
-                return res.status(404).json({ mensagem: "Livro não encontrado para exclusão." });
-            }
-
-            await this.repository.excluir(id);
-            res.status(204).send();
-        } catch (error) {
-            res.status(500).json({ mensagem: "Erro ao excluir livro." });
-        }
-    }
+    return res.json({ mensagem: "Livro removido" });
+  }
 }
