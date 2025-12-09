@@ -3,20 +3,20 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity("livros")
 export class Livro {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column()
-  titulo: string;
+  @Column({ type: "varchar" })
+  titulo!: string;
 
-  @Column()
-  autor: string;
+  @Column({ type: "varchar" })
+  autor!: string;
 
-  @Column()
-  isbn: string;
+  @Column({ type: "varchar" })
+  isbn!: string;
 
-  @Column()
-  anoPublicacao: number;
+  @Column({ type: "int" })
+  anoPublicacao!: number;
 
-  @Column()
-  disponivel: boolean;
+  @Column({ type: "boolean" })
+  disponivel!: boolean;
 }
